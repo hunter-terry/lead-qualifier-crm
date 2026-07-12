@@ -47,7 +47,9 @@ n8n workflow that scores incoming leads with local AI and writes the result stra
   One real limitation found and documented (not fixed, since it's not
   fixable at this node level): the Airtable node has no configurable
   timeout option, unlike the Ollama HTTP node.
-- NOT YET DONE: git init + push public to GitHub.
+- DONE (2026-07-12): pushed public —
+  github.com/hunter-terry/lead-qualifier-crm. Third n8n portfolio
+  piece shipped, alongside inquiry-triage and lead-qualifier.
 
 ## Steps / plan
 - [x] Airtable base + token
@@ -58,7 +60,7 @@ n8n workflow that scores incoming leads with local AI and writes the result stra
       same pattern as lead-qualifier)
 - [x] Plain-language walkthrough doc
 - [x] QA checklist
-- [ ] git init, push public to GitHub
+- [x] git init, push public to GitHub — done
 
 ## Notes
 - Runtime data folder is `~/lead-qualifier-crm-data/` (deliberately
