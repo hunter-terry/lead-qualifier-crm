@@ -4,6 +4,32 @@
 ## One-liner
 n8n workflow that scores incoming leads with local AI and writes the result straight into an Airtable base instead of a local file. Now also has a real front door: a quote-request form that feeds the same proven pipeline.
 
+## Where I'm at right now (update, 2026-07-15)
+Full security audit (all 3 n8n portfolio pieces) found the real one:
+`workflow.json`'s 3 Airtable nodes had picked up the real base ID,
+table ID, and credential id/name after being mirrored back from the
+live UI (the documented practice from 2026-07-14, below) — meaning the
+*next* commit would have published them. Confirmed via the GitHub API
+this never actually happened (public repo still had blank
+Base/Table). Stripped back to blank, matching `inquiry-triage`'s
+pattern; the Base/Table pickers had to be re-selected by hand in the UI
+afterward (same account, "Lead qualifier" base / "Lead Quality" table).
+Also fixed in the same pass: rotated the webhook token (old one shown
+in a session transcript, treated as burned), added a 10 req/min rate
+limiter ahead of the file write, and added the same prompt-injection
+defense as `lead-qualifier`'s SCORE/URGENCY check (see that project's
+CONTEXT.md — identical Parse & Validate logic, same fix applied to
+both). Everything verified against a real Airtable write, checked via
+`execution_entity.status='success'`, not just "the webhook didn't
+error." One operational wrinkle worth remembering: after re-wiring the
+pickers through the UI, the fix didn't actually take effect until also
+running `npx n8n publish:workflow --id=lead-qualifier-crm-001` and
+restarting — a UI save alone wasn't enough, matching the exact
+draft/publish trap already documented in the vault's
+`playbooks/fixes-log.md` top entry (this is now a second confirmed
+instance of it). Full findings across all 3 projects: vault root
+`playbooks/fixes-log.md`.
+
 ## Where I'm at right now (update, 2026-07-14)
 Gave this a real front door instead of the scrapped video demo (see
 root CONTEXT.md and `playbooks/demo-recording.md`'s "Strategy update"):
