@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Request a Quote</title>
+<style>
+  :root {
+    --ink: #1a1f36;
+    --muted: #5b6478;
+    --line: #dfe3ee;
+    --accent: #3454d1;
+    --bg: #f5f6fb;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    display: flex;
+    justify-content: center;
+    padding: 48px 20px;
+  }
+  .card {
+    width: 100%;
+    max-width: 520px;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 32px 28px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  }
+  .brand {
+    font-size: 14px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+  h1 {
+    font-size: 22px;
+    margin: 0 0 8px;
+  }
+  p.lead {
+    color: var(--muted);
+    font-size: 14px;
+    margin: 0 0 24px;
+    line-height: 1.5;
+  }
+  label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    margin: 16px 0 6px;
+  }
+  input, textarea, select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: inherit;
+    color: var(--ink);
+    background: #fff;
+  }
+  textarea { min-height: 110px; resize: vertical; }
+  input:focus, textarea:focus, select:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+  .row {
+    display: flex;
+    gap: 12px;
+  }
+  .row > div { flex: 1; }
+  button {
+    margin-top: 22px;
+    width: 100%;
+    padding: 12px;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  button:disabled { opacity: 0.6; cursor: default; }
+  .status {
+    margin-top: 16px;
+    padding: 12px 14px;
+    border-radius: 8px;
+    font-size: 14px;
+    line-height: 1.4;
+    display: none;
+  }
+  .status.ok { display: block; background: #eaf1ff; color: #3454d1; border: 1px solid #c3d4fb; }
+  .status.err { display: block; background: #fdecea; color: #a12622; border: 1px solid #f5c2c0; }
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="brand">Fieldstone Automation</div>
+    <h1>Start your project</h1>
+    <p class="lead">Tell us a bit about what you need automated and we'll follow up with next steps.</p>
+
+    <form id="leadForm">
+      <div class="row">
+        <div>
+          <label for="name">Name</label>
+          <input id="name" name="name" type="text" required />
+        </div>
+        <div>
+          <label for="company">Company</label>
+          <input id="company" name="company" type="text" />
+        </div>
+      </div>
+
+      <label for="email">Email</label>
+      <input id="email" name="email" type="email" required />
+
+      <label for="source">How did you hear about us?</label>
+      <select id="source" name="source">
+        <option value="Referral">Referral</option>
+        <option value="Google">Google search</option>
+        <option value="LinkedIn">LinkedIn</option>
+        <option value="Other">Other</option>
+      </select>
+
+      <label for="message">Tell us about your project</label>
+      <textarea id="message" name="message" required></textarea>
+
+      <button type="submit" id="submitBtn">Request a quote</button>
+      <div class="status" id="status"></div>
+    </form>
+  </div>
+
+<script>
+  // Local demo config - not a public deployment.
+  // WEBHOOK_URL and WEBHOOK_TOKEN below are placeholders. Copy this file
+  // to lead-capture-form.html (gitignored) and fill in real values from
+  // credentials.json before using it.
+  const WEBHOOK_URL = "http://127.0.0.1:5678/webhook/lead-intake";
+  const WEBHOOK_TOKEN = "REPLACE_WITH_YOUR_OWN_SECRET_TOKEN_HERE";
+
+  const form = document.getElementById("leadForm");
+  const statusEl = document.getElementById("status");
+  const submitBtn = document.getElementById("submitBtn");
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    statusEl.className = "status";
+    statusEl.textContent = "";
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Sending...";
+
+    const payload = {
+      name: document.getElementById("name").value,
+      company: document.getElementById("company").value,
+      email: document.getElementById("email").value,
+      source: document.getElementById("source").value,
+      message: document.getElementById("message").value,
+    };
+
+    try {
+      const res = await fetch(WEBHOOK_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Webhook-Token": WEBHOOK_TOKEN,
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok) {
+        throw new Error("Server responded with status " + res.status);
+      }
+
+      statusEl.className = "status ok";
+      statusEl.textContent = "Thanks - we've received your request and will follow up soon. (Scoring runs on the next minute's check, so it can take up to a minute to show up.)";
+      form.reset();
+    } catch (err) {
+      statusEl.className = "status err";
+      statusEl.textContent = "Something went wrong sending your request (" + err.message + "). Make sure n8n is running locally, then try again.";
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = "Request a quote";
+    }
+  });
+</script>
+</body>
+</html>

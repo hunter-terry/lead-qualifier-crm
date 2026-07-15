@@ -87,6 +87,35 @@ separately), so those had to be re-selected once more.
 stop it via its own shutdown path (Ctrl+C / graceful stop) if at all
 possible, since SQLite writes mid-flight aren't safe to interrupt.
 
+## Security audit fixes, verified live (2026-07-15)
+
+**Webhook token rotation.** The header-auth token was rotated (old one
+had appeared in a Claude Code session transcript, so treated as burned
+per `standards/security.md`). Confirmed: a request with the old token
+gets `403`; the new token works. `credentials.json`,
+`lead-capture-form.html`, and n8n's own credential store were all
+updated together.
+
+**Rate limiting.** Added a global sliding-window cap (10 requests/min)
+on the `Lead Webhook` entry point, ahead of the file-write step. Fired
+12 rapid requests with the new token: the first 10 succeeded
+(`received: true`, files written), requests 11 and 12 got a clean
+`{"error":true,"message":"Too many requests..."}` instead of being
+written to `inbox/` or reaching Ollama. Test files cleaned up after
+(not real leads).
+
+**Real Airtable base/table ID leak, caught before it was ever pushed.**
+`workflow.json`'s 3 Airtable nodes had picked up the real base ID,
+table ID, and credential id/name after being wired through the n8n UI
+(expected, per this file's "mirror live-wired values back" note in
+`automation-platforms.md`) — but that meant the *next* commit would
+have published them. Stripped back to blank (same pattern
+`inquiry-triage` already used) before anything was pushed; confirmed
+via the GitHub API that the public repo was never actually exposed.
+Re-wiring the Base/Table pickers by hand in the UI is now required
+again after any fresh `import:workflow` — same manual step the README
+already documented, just re-triggered by this fix.
+
 ## What this proves
 - Real qualified leads score "hot" and land in Airtable correctly
 - Real-but-unready leads score "cold" and land in Airtable correctly

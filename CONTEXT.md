@@ -2,7 +2,39 @@
 (your living "where I'm at" note - keep updating this as you go)
 
 ## One-liner
-n8n workflow that scores incoming leads with local AI and writes the result straight into an Airtable base instead of a local file.
+n8n workflow that scores incoming leads with local AI and writes the result straight into an Airtable base instead of a local file. Now also has a real front door: a quote-request form that feeds the same proven pipeline.
+
+## Where I'm at right now (update, 2026-07-14)
+Gave this a real front door instead of the scrapped video demo (see
+root CONTEXT.md and `playbooks/demo-recording.md`'s "Strategy update"):
+- `lead-capture-form.html` (gitignored, real token;
+  `lead-capture-form.example.html` is the committed template) — a
+  "Fieldstone Automation" quote-request form (Name/Company/Email/
+  Source/Project details), deliberately different branding from
+  `inquiry-triage`'s contact form since it's a different kind of
+  intake (sales lead vs support inquiry).
+- Architecture choice: added a new "Lead Webhook" + "Write Lead to
+  Inbox" Code node pair that just drops the submitted lead into the
+  *same* inbox folder the existing Schedule Trigger already polls,
+  rather than rebuilding the proven Ollama/Validate/Airtable chain
+  around a webhook trigger. Zero changes to the already-shipped scoring
+  logic; submissions show up in Airtable within ~60s (one schedule
+  tick), not instantly.
+- Tested for real twice, both via `execution_entity.status='success'`
+  and confirmed archived: an urgent budget-approved lead (via curl) and
+  a "just browsing, not urgent" lead (through the actual browser form).
+- Real mistake made and fixed live: editing `workflow.json` locally and
+  re-importing wiped the existing Airtable credential/base/table wiring
+  on the 3 existing Airtable nodes, because the local source file had
+  never been updated to match what got wired through the n8n UI back on
+  2026-07-12/13 — only the live database had it. Fixed by re-exporting
+  the live (correct) values and folding them back into the source file.
+  This exact trap is now documented in
+  `playbooks/automation-platforms.md` so it doesn't happen again on any
+  project.
+- Also (separately) republished with the correct `publish:workflow`
+  command after being found inactive from an earlier session - see
+  `playbooks/fixes-log.md`.
 
 ## Where I'm at right now
 - Airtable account created, base built (Leads table: Name/Email/
@@ -61,6 +93,27 @@ n8n workflow that scores incoming leads with local AI and writes the result stra
 - [x] Plain-language walkthrough doc
 - [x] QA checklist
 - [x] git init, push public to GitHub — done
+
+## Where I'm at right now (update, 2026-07-13)
+Pulled into a Terry Studio demo-recording session (Goal 1) that was
+ultimately scrapped — see vault root CONTEXT.md and
+`playbooks/demo-recording.md`. The `demo-leads/` folder created for it
+has been deleted (scratch work). **What's still real and NOT rolled
+back: 10 test leads were pushed into the live Airtable base during
+that session and are still there.** Claude attempted to build a
+cleanup workflow to remove them but was blocked by a safety check
+(bulk list/delete against a live external data store needs Hunter's
+direct action, not an inference from context) — **Hunter needs to
+delete those 10 rows himself in the Airtable app** (Leads table, most
+recent entries from 2026-07-13) before this base is clean again. Two
+things fixed along the way,
+both now required at every n8n startup on this machine:
+`N8N_RESTRICT_FILE_ACCESS_TO` must include this project's
+`lead-qualifier-crm-data` path (was missing, caused a clean "Access to
+the file is not allowed" failure); and the workflow was found
+unpublished/inactive mid-session for unclear reasons — republished, no
+data lost, but worth a glance if executions ever silently stop working
+here again.
 
 ## Notes
 - Runtime data folder is `~/lead-qualifier-crm-data/` (deliberately
