@@ -4,6 +4,24 @@
 ## One-liner
 n8n workflow that scores incoming leads with local AI and writes the result straight into an Airtable base instead of a local file. Now also has a real front door: a quote-request form that feeds the same proven pipeline.
 
+## Where I'm at right now (update, 2026-07-15, Airtable wiring made permanent)
+The blank-and-rewire pattern from the audit below (see next entry) had
+to be redone every time `import:workflow` ran, even for unrelated code
+changes elsewhere - hit while republishing an `inquiry-triage` fix and
+traced back to the same root cause here. Fixed properly: all 3 Airtable
+nodes (`Hot`/`Cold`/`Invalid`) now reference `$env.AIRTABLE_BASE_ID` and
+`$env.AIRTABLE_LEADS_TABLE_ID` as expressions instead of live-picked
+values, plus the `credentials` link (which had also been stripped
+during the audit below and never restored) is back, mirroring the
+webhook node's existing pattern - a credential id/name pointer, not the
+secret itself. Full mechanism in the vault's `fixes-log.md` and
+`playbooks/automation-platforms.md`, not duplicated here. Verified
+end-to-end after the fix via the real webhook -> Schedule Trigger poll
+-> Ollama -> Airtable path: execution 917,
+`execution_entity.status='success'`, real Airtable record written.
+`workflow.json`/`CONTEXT.md` changes not yet committed in this
+project's own repo.
+
 ## Where I'm at right now (update, 2026-07-15)
 Full security audit (all 3 n8n portfolio pieces) found the real one:
 `workflow.json`'s 3 Airtable nodes had picked up the real base ID,

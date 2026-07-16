@@ -190,12 +190,12 @@
         "resource": "record",
         "operation": "create",
         "base": {
-          "mode": "list",
-          "value": ""
+          "mode": "id",
+          "value": "={{ $env.AIRTABLE_BASE_ID }}"
         },
         "table": {
-          "mode": "list",
-          "value": ""
+          "mode": "id",
+          "value": "={{ $env.AIRTABLE_LEADS_TABLE_ID }}"
         },
         "columns": {
           "mappingMode": "autoMapInputData",
@@ -209,7 +209,13 @@
       "name": "Airtable Create - Hot",
       "type": "n8n-nodes-base.airtable",
       "typeVersion": 2.2,
-      "position": [1120, -220]
+      "position": [1120, -220],
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "oQ7aYOPIVZobJxdJ",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
     },
     {
       "parameters": {
@@ -217,12 +223,12 @@
         "resource": "record",
         "operation": "create",
         "base": {
-          "mode": "list",
-          "value": ""
+          "mode": "id",
+          "value": "={{ $env.AIRTABLE_BASE_ID }}"
         },
         "table": {
-          "mode": "list",
-          "value": ""
+          "mode": "id",
+          "value": "={{ $env.AIRTABLE_LEADS_TABLE_ID }}"
         },
         "columns": {
           "mappingMode": "autoMapInputData",
@@ -236,7 +242,13 @@
       "name": "Airtable Create - Cold",
       "type": "n8n-nodes-base.airtable",
       "typeVersion": 2.2,
-      "position": [1120, 0]
+      "position": [1120, 0],
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "oQ7aYOPIVZobJxdJ",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
     },
     {
       "parameters": {
@@ -244,12 +256,12 @@
         "resource": "record",
         "operation": "create",
         "base": {
-          "mode": "list",
-          "value": ""
+          "mode": "id",
+          "value": "={{ $env.AIRTABLE_BASE_ID }}"
         },
         "table": {
-          "mode": "list",
-          "value": ""
+          "mode": "id",
+          "value": "={{ $env.AIRTABLE_LEADS_TABLE_ID }}"
         },
         "columns": {
           "mappingMode": "autoMapInputData",
@@ -263,7 +275,13 @@
       "name": "Airtable Create - Invalid",
       "type": "n8n-nodes-base.airtable",
       "typeVersion": 2.2,
-      "position": [1120, 220]
+      "position": [1120, 220],
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "oQ7aYOPIVZobJxdJ",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
     },
     {
       "parameters": {
