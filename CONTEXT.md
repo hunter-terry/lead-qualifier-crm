@@ -19,8 +19,11 @@ secret itself. Full mechanism in the vault's `fixes-log.md` and
 end-to-end after the fix via the real webhook -> Schedule Trigger poll
 -> Ollama -> Airtable path: execution 917,
 `execution_entity.status='success'`, real Airtable record written.
-`workflow.json`/`CONTEXT.md` changes not yet committed in this
-project's own repo.
+These `workflow.json`/`CONTEXT.md` changes **were** committed and pushed
+afterwards, in `3272c74` ("Fix Airtable Base/Table + credential link
+resetting on every import"). The line here previously said "not yet
+committed", which was stale; corrected 2026-07-19 against the actual git
+log. Working tree is clean and nothing is unpushed.
 
 ## Where I'm at right now (update, 2026-07-15)
 Full security audit (all 3 n8n portfolio pieces) found the real one:
