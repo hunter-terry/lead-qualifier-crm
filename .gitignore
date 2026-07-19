@@ -2,3 +2,6 @@ node_modules/
 *.log
 credentials.json
 lead-capture-form.html
+
+# Local Airtable target IDs (not secrets, but machine-specific)
+.env
