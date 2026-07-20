@@ -23,7 +23,10 @@ These `workflow.json`/`CONTEXT.md` changes **were** committed and pushed
 afterwards, in `3272c74` ("Fix Airtable Base/Table + credential link
 resetting on every import"). The line here previously said "not yet
 committed", which was stale; corrected 2026-07-19 against the actual git
-log. Working tree is clean and nothing is unpushed.
+log. This line then went stale again the same evening — commit `1d83ab8`
+(gitignoring `.env`) landed after it was written. Pushed and re-verified
+2026-07-19 evening; nothing is unpushed as of then. **Re-run
+`git log @{u}..HEAD` rather than trusting this sentence.**
 
 ## Where I'm at right now (update, 2026-07-15)
 Full security audit (all 3 n8n portfolio pieces) found the real one:
